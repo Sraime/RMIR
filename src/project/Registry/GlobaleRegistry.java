@@ -1,6 +1,9 @@
 package project.Registry;
 
 import project.MainRegistry;
+import project.Registry.balancer.Balancer;
+import project.Registry.balancer.BalancerFactory;
+import project.Registry.balancer.BalancerType;
 
 import java.rmi.AccessException;
 import java.rmi.AlreadyBoundException;
@@ -12,39 +15,46 @@ import java.rmi.registry.Registry;
 import java.util.*;
 
 public class GlobaleRegistry implements ReplicationRegistry {
-    private Hashtable<String, List<UniqueRemote>> bindings;
+    private Hashtable<String, Balancer> bindings;
+    private BalancerType tbalancer;
 
     public GlobaleRegistry(){
-        this.bindings = new Hashtable<String, List<UniqueRemote>>(101);
+        this(BalancerType.ROUND_ROBIN_BALANCER);
+    }
+
+    public GlobaleRegistry(BalancerType tbalancer){
+        this.bindings = new Hashtable<String, Balancer>(101);
+        this.tbalancer = tbalancer;
     }
 
     @Override
     public Remote lookup(String key) throws NotBoundException, RemoteException {
-        System.out.println("lookup from key "+key);
         synchronized (this.bindings) {
-            List<UniqueRemote> list = (List<UniqueRemote>) this.bindings.get(key);
-            if (list == null) {
+            Balancer b = (Balancer) this.bindings.get(key);
+            if (b == null) {
                 throw new NotBoundException(key);
             } else {
-                return list.get(list.size()-1).getPayload();
+                UniqueRemote ur = b.getNext();
+                System.out.println("lookup remote object "+ur.getId()+" from key "+key);
+                return ur.getPayload();
             }
         }
     }
 
     @Override
     public void bind(String key, Remote obj) throws RemoteException, AlreadyBoundException, AccessException {
-        System.out.println("binding object "+((UniqueRemote) obj).getId()+" with key "+key);
+        UniqueRemote ur = (UniqueRemote) obj;
+        System.out.println("binding object "+ur.getId()+" with key "+key);
         synchronized (this.bindings) {
-            List<UniqueRemote> list = (List<UniqueRemote>) this.bindings.get(key);
-            if (list == null) {
-                list = new LinkedList<UniqueRemote>();
+            Balancer b = this.bindings.get(key);
+            if (b == null) {
+                b = BalancerFactory.getBalancer(this.tbalancer);
             } else {
-                for(UniqueRemote ro : list)
-                    if(ro.getId().equals(((UniqueRemote) obj).getId()))
-                        throw new AlreadyBoundException(key);
+                if(b.containRessouce(ur.getId()))
+                    throw new AlreadyBoundException(key);
             }
-            list.add((UniqueRemote) obj);
-            this.bindings.put(key, list);
+            b.addRessource(ur);
+            this.bindings.put(key, b);
         }
     }
 
@@ -55,21 +65,18 @@ public class GlobaleRegistry implements ReplicationRegistry {
 
     @Override
     public void unbindRemote(String key, String id) throws RemoteException, NotBoundException, AccessException {
-        System.out.println("unbindind key "+key);
+        System.out.println("unbindind "+(id == null ? "" : "object " + id + " ") + "with key " + key);
         synchronized (this.bindings) {
-            List<UniqueRemote> list = (List<UniqueRemote>) this.bindings.get(key);
-            if (list == null) {
+            Balancer b = (Balancer) this.bindings.get(key);
+            if (b == null) {
                 throw new NotBoundException(key);
             } else {
                 if(id == null)
-                    list = new LinkedList<UniqueRemote>();
+                    b = BalancerFactory.getBalancer(this.tbalancer);
                 else{
-                    for (UniqueRemote ro : list) {
-                        if (ro.getId().equals(id)) {
-                            list.remove(ro);
-                            return;
-                        }
-                    }
+                    try {
+                        b.removeRessource(id);
+                    }catch (NotBoundException e){}
                 }
             }
             throw new NotBoundException(key);

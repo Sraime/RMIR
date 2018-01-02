@@ -10,7 +10,7 @@ public class MainServers {
     public static void main(String[] args){
         try {
             RemoteServer rs = new SorterService();
-            rs.run();
+            rs.start();
 
             Scanner pauser = new Scanner (System.in);
             pauser.nextLine();
