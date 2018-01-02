@@ -1,7 +1,7 @@
 package project.Server;
 
-import exercise1.Sorter;
-import exercise1.server.SimpleSorter;
+import project.Registry.RemotePacket;
+import project.Services.SorterPacket;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -17,7 +17,7 @@ public class SorterService extends RemoteServer{
     @Override
     public void run() {
 
-        Sorter sorter = new SimpleSorter();
+        SorterPacket sorter = new SorterPacket();
         try {
             this.saveRemoteObject(sorter);
         } catch (RemoteException e) {

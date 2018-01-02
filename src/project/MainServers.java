@@ -3,7 +3,6 @@ package project;
 import project.Server.RemoteServer;
 import project.Server.SorterService;
 
-import java.rmi.RemoteException;
 import java.util.Scanner;
 
 public class MainServers {
