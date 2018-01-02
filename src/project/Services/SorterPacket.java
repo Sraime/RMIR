@@ -1,9 +1,10 @@
 package project.Services;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-public class SorterPacket implements Sorter {
+public class SorterPacket implements Sorter, Serializable {
 
     @Override
     public List<String> sort(List<String> list) {

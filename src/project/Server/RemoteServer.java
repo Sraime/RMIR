@@ -2,8 +2,10 @@ package project.Server;
 
 import project.Registry.GlobaleRegistry;
 import project.Registry.RemotePacket;
+import project.Registry.ReplicationRegistry;
 import project.Registry.UniqueRemote;
 
+import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -15,7 +17,7 @@ public abstract class RemoteServer extends Thread{
 
     private static final String HOST_GLOBAL_REGISTRY = "localhost";
 
-    private Registry registry;
+    private ReplicationRegistry registry;
     private final String serveurId;
     private final String keyRegistry;
 
@@ -30,7 +32,7 @@ public abstract class RemoteServer extends Thread{
         System.out.println(this.serveurId+" created with key "+this.keyRegistry);
     }
 
-    protected final void saveRemoteObject(Remote obj) throws RemoteException {
+    protected final void saveRemoteObject(Remote obj) throws RemoteException, AlreadyBoundException {
 
         UniqueRemote stub = (UniqueRemote) UnicastRemoteObject.exportObject(new RemotePacket(obj), 0);
         System.out.println(this.serveurId + " generated skeleton and stub for '"+this.keyRegistry+"'");

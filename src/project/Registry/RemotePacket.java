@@ -15,7 +15,7 @@ public class RemotePacket implements UniqueRemote {
     }
 
     @Override
-    public String getId() {
+    public String getId() throws RemoteException {
         return ID;
     }
 

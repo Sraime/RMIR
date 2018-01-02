@@ -9,10 +9,9 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
-public class GlobaleRegistry implements Registry {
+public class GlobaleRegistry implements ReplicationRegistry {
     private Hashtable<String, List<UniqueRemote>> bindings;
 
     public GlobaleRegistry(){
@@ -20,7 +19,8 @@ public class GlobaleRegistry implements Registry {
     }
 
     @Override
-    public Remote lookup(String key) throws RemoteException, NotBoundException {
+    public Remote lookup(String key) throws NotBoundException, RemoteException {
+        System.out.println("lookup from key "+key);
         synchronized (this.bindings) {
             List<UniqueRemote> list = (List<UniqueRemote>) this.bindings.get(key);
             if (list == null) {
@@ -33,6 +33,7 @@ public class GlobaleRegistry implements Registry {
 
     @Override
     public void bind(String key, Remote obj) throws RemoteException, AlreadyBoundException, AccessException {
+        System.out.println("binding object "+((UniqueRemote) obj).getId()+" with key "+key);
         synchronized (this.bindings) {
             List<UniqueRemote> list = (List<UniqueRemote>) this.bindings.get(key);
             if (list == null) {
@@ -52,7 +53,9 @@ public class GlobaleRegistry implements Registry {
         unbindRemote(key, null);
     }
 
+    @Override
     public void unbindRemote(String key, String id) throws RemoteException, NotBoundException, AccessException {
+        System.out.println("unbindind key "+key);
         synchronized (this.bindings) {
             List<UniqueRemote> list = (List<UniqueRemote>) this.bindings.get(key);
             if (list == null) {
@@ -101,8 +104,8 @@ public class GlobaleRegistry implements Registry {
         }
     }
 
-    public static Registry getRegistry(String host) throws RemoteException, NotBoundException {
+    public static ReplicationRegistry getRegistry(String host) throws RemoteException, NotBoundException {
         Registry gr = LocateRegistry.getRegistry(host, MainRegistry.R_PORT);
-        return (Registry) gr.lookup(MainRegistry.GR_KEY);
+        return (ReplicationRegistry) gr.lookup(MainRegistry.GR_KEY);
     }
 }
