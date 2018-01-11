@@ -6,6 +6,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 import exercise1.Sorter;
+import project.Registry.UniqueRemote;
 
 /**
  * Server program.
@@ -37,7 +38,7 @@ public class Server {
     System.out.println("server: instanciated SimpleSorter");
 
     // create a skeleton and a stub for that remote object
-    Sorter stub = (Sorter) UnicastRemoteObject.exportObject(sorter, 0);
+    UniqueRemote stub = (UniqueRemote) UnicastRemoteObject.exportObject(sorter, 0);
     System.out.println("server: generated skeleton and stub");
 
     // register the remote object's stub in the registry

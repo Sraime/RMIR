@@ -1,15 +1,16 @@
-package project.Registry;
+package project.Registry.remote;
 
-import java.rmi.Remote;
+import project.Registry.UniqueRemote;
+
 import java.rmi.RemoteException;
 import java.util.UUID;
 
-public class RemotePacket implements UniqueRemote {
+public class RemoteTypedPacket implements UniqueRemote {
 
     private final String ID;
-    private Remote payload;
+    private TypedRemoteInterface payload;
 
-    public RemotePacket(Remote payload){
+    public RemoteTypedPacket(TypedRemoteInterface payload){
         this.ID = UUID.randomUUID()+"";
         this.payload = payload;
     }
@@ -20,8 +21,7 @@ public class RemotePacket implements UniqueRemote {
     }
 
     @Override
-    public Remote getPayload() throws RemoteException {
+    public TypedRemoteInterface getPayload() throws RemoteException {
         return payload;
     }
-
 }

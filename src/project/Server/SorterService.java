@@ -1,9 +1,6 @@
 package project.Server;
 
-import project.Registry.RemotePacket;
 import project.Services.SorterPacket;
-
-import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
@@ -22,8 +19,6 @@ public class SorterService extends RemoteServer{
         try {
             this.saveRemoteObject(sorter);
         } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (AlreadyBoundException e) {
             e.printStackTrace();
         }
     }

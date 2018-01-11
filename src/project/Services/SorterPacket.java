@@ -1,10 +1,12 @@
 package project.Services;
 
+import project.Registry.remote.TypedRemoteInterface;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-public class SorterPacket implements Sorter, Serializable {
+public class SorterPacket implements Sorter, Serializable, TypedRemoteInterface {
 
     @Override
     public List<String> sort(List<String> list) {
@@ -33,5 +35,10 @@ public class SorterPacket implements Sorter, Serializable {
     @Override
     public String toString() {
         return "SimpleSorter " + Thread.currentThread();
+    }
+
+    @Override
+    public Class<? extends RemoteRessource> getType() {
+        return Sorter.class;
     }
 }

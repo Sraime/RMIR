@@ -1,21 +1,16 @@
 package project.Services;
 
-import java.rmi.Remote;
+import project.Registry.balancer.BalancerType;
+import project.Registry.balancer.LoadBalanced;
+import project.Registry.replication.ReplicationPolicy;
+import project.Registry.replication.ReplicationType;
+
 import java.rmi.RemoteException;
 import java.util.List;
 
-/**
- * The Sorter interface defines a service that <code>sort</code> and
- * <code>reverseSort</code> lists of <code>String</code>s.
- *
- * As a <b>remote</b> interface, Sorter must:
- * <ul>
- * <li>extends the <code>Remote</code> interface,
- * <li>have all its methods throw <code>RemoteException</code>.
- * </ul>
- *
- */
-public interface Sorter extends Remote {
+@LoadBalanced(policy = BalancerType.ROUND_ROBIN_BALANCER)
+@ReplicationPolicy(type = ReplicationType.PASSIVE)
+public interface Sorter extends RemoteRessource {
 
   public List<String> sort(List<String> list) throws RemoteException;
 

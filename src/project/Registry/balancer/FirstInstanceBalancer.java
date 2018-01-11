@@ -2,26 +2,22 @@ package project.Registry.balancer;
 
 import project.Registry.UniqueRemote;
 
-import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.List;
 
-public class RoundRobinBalancer implements Balancer{
+public class FirstInstanceBalancer implements Balancer{
 
     private LinkedList<UniqueRemote> remotes;
-    private Integer nextIndex;
 
-    public RoundRobinBalancer(){
+    public FirstInstanceBalancer(){
         this.remotes = new LinkedList<UniqueRemote>();
     }
 
     @Override
     public void addRessource(UniqueRemote r) {
         this.remotes.add(r);
-        if(this.nextIndex == null)
-            this.nextIndex = 0;
     }
 
     @Override
@@ -33,13 +29,11 @@ public class RoundRobinBalancer implements Balancer{
         if(obj == null)
             throw new NotBoundException();
         this.remotes.remove(obj);
-        if(this.remotes.size() == 0)
-            this.nextIndex = null;
     }
 
     @Override
     public List<UniqueRemote> getRessources() {
-        return remotes;
+        return null;
     }
 
     @Override
@@ -52,8 +46,6 @@ public class RoundRobinBalancer implements Balancer{
 
     @Override
     public UniqueRemote getNext() {
-        UniqueRemote r = this.remotes.get(this.nextIndex);
-        this.nextIndex = (nextIndex+1)%this.remotes.size();
-        return  r;
+        return  remotes.get(0);
     }
 }

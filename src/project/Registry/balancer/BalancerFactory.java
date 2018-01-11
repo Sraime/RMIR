@@ -6,6 +6,8 @@ public class BalancerFactory {
         switch(t){
             case ROUND_ROBIN_BALANCER :
                 return new RoundRobinBalancer();
+            case FIRST_INSTANCE_BALANCER:
+                return new RoundRobinBalancer();
             default :
                 return null;
         }

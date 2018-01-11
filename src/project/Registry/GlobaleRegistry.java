@@ -4,7 +4,12 @@ import project.MainRegistry;
 import project.Registry.balancer.Balancer;
 import project.Registry.balancer.BalancerFactory;
 import project.Registry.balancer.BalancerType;
+import project.Registry.balancer.LoadBalanced;
+import project.Registry.remote.RemoteHandler;
+import project.Registry.remote.TypedRemoteInterface;
+import project.Registry.replication.ReplicattionPolicyRequiredException;
 
+import java.lang.reflect.Proxy;
 import java.rmi.AccessException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
@@ -30,13 +35,22 @@ public class GlobaleRegistry implements ReplicationRegistry {
     @Override
     public Remote lookup(String key) throws NotBoundException, RemoteException {
         synchronized (this.bindings) {
-            Balancer b = (Balancer) this.bindings.get(key);
+            Balancer b = this.bindings.get(key);
             if (b == null) {
                 throw new NotBoundException(key);
             } else {
                 UniqueRemote ur = b.getNext();
-                System.out.println("lookup remote object "+ur.getId()+" from key "+key);
-                return ur.getPayload();
+                TypedRemoteInterface tri = (TypedRemoteInterface)ur.getPayload();
+                try {
+                    RemoteHandler handler = new RemoteHandler(ur);
+                    System.out.println("lookup remote object "+ur.getId()+" from key "+key);
+                    return (Remote) Proxy.newProxyInstance(tri.getType().getClassLoader(),
+                            new Class[] { tri.getType() },
+                            handler);
+                } catch (ReplicattionPolicyRequiredException e) {
+                    e.printStackTrace();
+                }
+                return null;
             }
         }
     }
@@ -48,7 +62,7 @@ public class GlobaleRegistry implements ReplicationRegistry {
         synchronized (this.bindings) {
             Balancer b = this.bindings.get(key);
             if (b == null) {
-                b = BalancerFactory.getBalancer(this.tbalancer);
+                b = BalancerFactory.getBalancer(getBalancerType(ur));
             } else {
                 if(b.containRessouce(ur.getId()))
                     throw new AlreadyBoundException(key);
@@ -72,7 +86,7 @@ public class GlobaleRegistry implements ReplicationRegistry {
                 throw new NotBoundException(key);
             } else {
                 if(id == null)
-                    b = BalancerFactory.getBalancer(this.tbalancer);
+                    b = null;
                 else{
                     try {
                         b.removeRessource(id);
@@ -114,5 +128,11 @@ public class GlobaleRegistry implements ReplicationRegistry {
     public static ReplicationRegistry getRegistry(String host) throws RemoteException, NotBoundException {
         Registry gr = LocateRegistry.getRegistry(host, MainRegistry.R_PORT);
         return (ReplicationRegistry) gr.lookup(MainRegistry.GR_KEY);
+    }
+
+    private BalancerType getBalancerType(UniqueRemote ur) throws RemoteException {
+        TypedRemoteInterface tri = (TypedRemoteInterface) ur.getPayload();
+        LoadBalanced lb = tri.getType().getAnnotation(LoadBalanced.class);
+        return lb.policy();
     }
 }
