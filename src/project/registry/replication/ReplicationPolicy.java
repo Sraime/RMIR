@@ -1,5 +1,7 @@
 package project.registry.replication;
 
+import project.registry.replication.ReplicationType;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 

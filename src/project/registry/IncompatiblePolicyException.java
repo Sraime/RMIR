@@ -1,4 +1,4 @@
 package project.registry;
 
-public class IncompatiblePolicyException extends Exception{
+public class IncompatiblePolicyException extends Exception {
 }

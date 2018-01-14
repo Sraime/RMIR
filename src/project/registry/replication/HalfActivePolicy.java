@@ -7,12 +7,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-public class ActivePolicy implements ReplicationPolicyInterface {
+public class HalfActivePolicy implements ReplicationPolicyInterface {
 
     private UniqueRemote statelessTarget;
     private List<UniqueRemote> remotes;
 
-    ActivePolicy(UniqueRemote statelessTarget, List<UniqueRemote> remotes) {
+    HalfActivePolicy(UniqueRemote statelessTarget, List<UniqueRemote> remotes) {
         this.statelessTarget = statelessTarget;
         this.remotes = remotes;
     }
