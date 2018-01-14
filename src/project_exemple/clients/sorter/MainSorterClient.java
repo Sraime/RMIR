@@ -1,6 +1,6 @@
 package project_exemple.clients.sorter;
 
-import project.registry.GlobaleRegistry;
+import project.registry.GlobalRegistry;
 import project.registry.ReplicationRegistry;
 import project_exemple.servers.sorter.Sorter;
 
@@ -29,7 +29,7 @@ public class MainSorterClient {
   public static void main(String[] args) throws Exception {
 
     // locate the registry that runs on the remote object's server
-    ReplicationRegistry registry = GlobaleRegistry.getRegistry(SERVICE_HOST);
+    ReplicationRegistry registry = GlobalRegistry.getRegistry(SERVICE_HOST);
     System.out.println("client: retrieved registry");
 
     // retrieve the stub of the remote object by its name

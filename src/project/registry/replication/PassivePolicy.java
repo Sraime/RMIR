@@ -5,33 +5,33 @@ import project.registry.replication.ReplicationPolicyInterface;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.rmi.RemoteException;
 import java.util.List;
 
 public class PassivePolicy implements ReplicationPolicyInterface {
 
-    private UniqueRemote statelessTarget;
-    private List<UniqueRemote> remotes;
+    public static final int LEAD_INDEX = 0;
 
-    private UniqueRemote statelessTarget;
-    private List<UniqueRemote> remotes;
+    private UniqueRemote lead;
 
-    PassivePolicy(UniqueRemote statelessTarget, List<UniqueRemote> remotes) {
-        this.statelessTarget = statelessTarget;
-        this.remotes = remotes;
+    PassivePolicy(UniqueRemote lead) {
+        this.lead = lead;
     }
 
     @Override
-    public void applyPolicy(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
-        this.applyStateless(method, args);
+    public Object applyPolicy(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException, RemoteException {
+        return this.applyStateless(method, args);
     }
 
     @Override
-    public void applyStateless(Method method, Object[] args) {
-        method.invoke(statelessTarget, args);
+    public Object applyStateless(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException, RemoteException {
+        System.out.println("[POLICY] applying the Passive replication");
+        System.out.println("[POLICY] contacting the service with id " + lead.getId());
+        return method.invoke(lead.getPayload(), args);
     }
 
     @Override
-    public void applyStateful(Method method, Object[] args) {
-        this.applyStateless(method, args);
+    public Object applyStateful(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException, RemoteException {
+        return this.applyStateless(method, args);
     }
 }

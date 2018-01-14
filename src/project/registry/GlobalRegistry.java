@@ -7,7 +7,6 @@ import project.registry.balancer.BalancerType;
 import project.registry.balancer.LoadBalanced;
 import project.registry.remote.RemoteHandler;
 import project.registry.remote.TypedRemoteInterface;
-import project.registry.replication.ReplicationRegistry;
 import project.registry.replication.ReplicationPolicy;
 import project.registry.replication.ReplicationPolicyFactory;
 

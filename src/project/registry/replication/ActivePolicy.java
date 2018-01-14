@@ -1,10 +1,11 @@
 package project.registry.replication;
 
 import project.registry.UniqueRemote;
-import project.registry.replication.ReplicationPolicyInterface;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.rmi.RemoteException;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ActivePolicy implements ReplicationPolicyInterface {
@@ -18,23 +19,30 @@ public class ActivePolicy implements ReplicationPolicyInterface {
     }
 
     @Override
-    public void applyPolicy(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
-        if(!method.isAnnotationPresent(project.registry.replication.Stateful.class)) {
-            this.applyStateless(method, args);
+    public Object applyPolicy(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException, RemoteException {
+        if(!method.isAnnotationPresent(Stateful.class)) {
+            return this.applyStateless(method, args);
         } else {
-            this.applyStateful(method, args);
+            return this.applyStateful(method, args);
         }
     }
 
     @Override
-    public void applyStateless(Method method, Object[] args) {
-        method.invoke(statelessTarget, args);
+    public Object applyStateless(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException, RemoteException {
+        System.out.println("[POLICY] applying the Active replication in stateless mode");
+        System.out.println("[POLICY] contacting the service with id " + statelessTarget.getId());
+        return method.invoke(statelessTarget.getPayload(), args);
     }
 
     @Override
-    public void applyStateful(Method method, Object[] args) {
+    public Object applyStateful(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException, RemoteException {
+        System.out.println("[POLICY] applying the Active replication in stateful mode");
+        LinkedList<Object> results = new LinkedList<Object>();
         for (UniqueRemote remote : this.remotes) {
-            method.invoke(remote, args);
+            System.out.println("[POLICY] contacting the service with id " + remote.getId());
+            results.add(method.invoke(remote.getPayload(), args));
         }
+        // CONCENSUS TODO
+        return results.get(0);
     }
 }
