@@ -6,7 +6,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 import exercise1.Sorter;
-import project.Registry.UniqueRemote;
+import project.registry.UniqueRemote;
 
 /**
  * Server program.
