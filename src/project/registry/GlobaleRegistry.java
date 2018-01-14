@@ -6,6 +6,8 @@ import project.registry.balancer.BalancerType;
 import project.registry.balancer.LoadBalanced;
 import project.registry.remote.RemoteHandler;
 import project.registry.remote.TypedRemoteInterface;
+import project.registry.replication.ReplicationPolicy;
+import project.registry.replication.ReplicationPolicyFactory;
 import project.registry.replication.ReplicattionPolicyRequiredException;
 
 import java.lang.reflect.Proxy;
@@ -50,16 +52,12 @@ public class GlobaleRegistry implements ReplicationRegistry {
             } else {
                 UniqueRemote ur = b.getNext();
                 TypedRemoteInterface tri = (TypedRemoteInterface)ur.getPayload();
-                try {
-                    RemoteHandler handler = new RemoteHandler(ur);
-                    System.out.println("lookup remote object "+ur.getId()+" from key "+key);
-                    return (Remote) Proxy.newProxyInstance(tri.getType().getClassLoader(),
-                            new Class[] { tri.getType() },
-                            handler);
-                } catch (ReplicattionPolicyRequiredException e) {
-                    e.printStackTrace();
-                }
-                return null;
+                ReplicationPolicy rp = tri.getType().getAnnotation(ReplicationPolicy.class);
+                RemoteHandler handler = new RemoteHandler(ReplicationPolicyFactory.getPolicy(rp.type(), ur, b.getRessources()));
+                System.out.println("lookup remote object "+ur.getId()+" from key "+key);
+                return (Remote) Proxy.newProxyInstance(tri.getType().getClassLoader(),
+                        new Class[] { tri.getType() },
+                        handler);
             }
         }
     }
