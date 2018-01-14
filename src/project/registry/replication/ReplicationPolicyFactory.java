@@ -6,7 +6,7 @@ import java.util.List;
 
 public class ReplicationPolicyFactory {
 
-    public static ReplicationPolicyInterface getPolicy(ReplicationType type, UniqueRemote stateless, List<UniqueRemote> remotes){
+    public static ReplicationPolicyInterface getPolicy(ReplicationType type, UniqueRemote stateless, List<UniqueRemote> remotes) {
         return null;
     }
 }

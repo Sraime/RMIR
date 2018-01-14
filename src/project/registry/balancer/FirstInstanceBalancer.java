@@ -7,11 +7,11 @@ import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.List;
 
-public class FirstInstanceBalancer implements Balancer{
+public class FirstInstanceBalancer implements Balancer {
 
     private LinkedList<UniqueRemote> remotes;
 
-    public FirstInstanceBalancer(){
+    public FirstInstanceBalancer() {
         this.remotes = new LinkedList<UniqueRemote>();
     }
 
@@ -23,10 +23,10 @@ public class FirstInstanceBalancer implements Balancer{
     @Override
     public void removeRessource(String id) throws RemoteException, NotBoundException {
         UniqueRemote obj = null;
-        for(UniqueRemote r : remotes)
-            if(r.getId().equals(id))
+        for (UniqueRemote r : remotes)
+            if (r.getId().equals(id))
                 obj = r;
-        if(obj == null)
+        if (obj == null)
             throw new NotBoundException();
         this.remotes.remove(obj);
     }
@@ -38,14 +38,14 @@ public class FirstInstanceBalancer implements Balancer{
 
     @Override
     public boolean containRessouce(String id) throws RemoteException {
-        for(UniqueRemote r : remotes)
-            if(r.getId().equals(id))
+        for (UniqueRemote r : remotes)
+            if (r.getId().equals(id))
                 return true;
         return false;
     }
 
     @Override
     public UniqueRemote getNext() {
-        return  remotes.get(0);
+        return remotes.get(0);
     }
 }

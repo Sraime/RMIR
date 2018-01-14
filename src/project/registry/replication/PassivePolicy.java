@@ -7,23 +7,22 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-public class ActivePolicy implements ReplicationPolicyInterface {
+public class PassivePolicy implements ReplicationPolicyInterface {
 
     private UniqueRemote statelessTarget;
     private List<UniqueRemote> remotes;
 
-    ActivePolicy(UniqueRemote statelessTarget, List<UniqueRemote> remotes) {
+    private UniqueRemote statelessTarget;
+    private List<UniqueRemote> remotes;
+
+    PassivePolicy(UniqueRemote statelessTarget, List<UniqueRemote> remotes) {
         this.statelessTarget = statelessTarget;
         this.remotes = remotes;
     }
 
     @Override
     public void applyPolicy(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
-        if(!method.isAnnotationPresent(project.registry.replication.Stateful.class)) {
-            this.applyStateless(method, args);
-        } else {
-            this.applyStateful(method, args);
-        }
+        this.applyStateless(method, args);
     }
 
     @Override
@@ -33,8 +32,6 @@ public class ActivePolicy implements ReplicationPolicyInterface {
 
     @Override
     public void applyStateful(Method method, Object[] args) {
-        for (UniqueRemote remote : this.remotes) {
-            method.invoke(remote, args);
-        }
+        this.applyStateless(method, args);
     }
 }

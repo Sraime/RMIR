@@ -5,5 +5,9 @@ import java.lang.reflect.Method;
 
 public interface ReplicationPolicyInterface {
 
-    public void applyPolicy(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException;
+    void applyPolicy(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException;
+
+    void applyStateless(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException;
+
+    void applyStateful(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException;
 }
