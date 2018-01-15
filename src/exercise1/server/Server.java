@@ -5,7 +5,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
-import exercise1.Sorter;
+import exercise1.models.Sorter;
+import exercise1.models.SimpleSorter;
 import project.registry.UniqueRemote;
 
 /**

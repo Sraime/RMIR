@@ -24,10 +24,12 @@ public class GlobalRegistry implements ReplicationRegistry {
 
     public static final int R_PORT = 1099;
     public static final String GR_KEY = "GR";
-    private Hashtable<String, Balancer> bindings;
+    private Hashtable<String, List<UniqueRemote>> bindings;
+    private Hashtable<String, Balancer> balancers;
 
     private GlobalRegistry() {
-        this.bindings = new Hashtable<String, Balancer>(101);
+        this.bindings = new Hashtable<String, List<UniqueRemote>>(101);
+        this.balancers = new Hashtable<String, Balancer>();
     }
 
     public static ReplicationRegistry loadReagistry() throws RemoteException, AlreadyBoundException {
@@ -45,14 +47,14 @@ public class GlobalRegistry implements ReplicationRegistry {
     @Override
     public Remote lookup(String key) throws NotBoundException, RemoteException {
         synchronized (this.bindings) {
-            Balancer b = this.bindings.get(key);
+            Balancer b = this.balancers.get(key);
             if (b == null) {
                 throw new NotBoundException(key);
             } else {
-                UniqueRemote ur = b.getNext();
+                UniqueRemote ur = b.getNext(bindings.get(key));
                 TypedRemote tri = (TypedRemote) ur.getPayload();
                 Replicated rp = tri.getType().getAnnotation(Replicated.class);
-                RemoteHandler handler = new RemoteHandler(ReplicationPolicyFactory.getPolicy(rp.type(), ur, b.getRessources()));
+                RemoteHandler handler = new RemoteHandler(ReplicationPolicyFactory.getPolicy(rp.type(), ur, bindings.get(key)));
                 System.out.println("lookup remote object " + ur.getId() + " from key " + key);
                 return (Remote) Proxy.newProxyInstance(tri.getType().getClassLoader(),
                         new Class[]{tri.getType()},
@@ -66,16 +68,29 @@ public class GlobalRegistry implements ReplicationRegistry {
         UniqueRemote ur = (UniqueRemote) obj;
         System.out.println("binding object " + ur.getId() + " with key " + key);
         synchronized (this.bindings) {
-            Balancer b = this.bindings.get(key);
+            Balancer b = this.balancers.get(key);
+            List<UniqueRemote> list = this.bindings.get(key);
             if (b == null) {
-                b = BalancerFactory.getBalancer(getBalancerType(ur));
+                this.balancers.put(key,BalancerFactory.getBalancer(getBalancerType(ur)));
+                this.bindings.put(key,list = new LinkedList<UniqueRemote>());
             } else {
-                if (b.containRessouce(ur.getId()))
+                if (ressourceIndex(this.bindings.get(key),((UniqueRemote) obj).getId()) > 0)
                     throw new AlreadyBoundException(key);
             }
-            b.addRessource(ur);
-            this.bindings.put(key, b);
+            this.bindings.get(key).add(ur);
         }
+    }
+
+    private int ressourceIndex(List<UniqueRemote> list, String id) {
+        for(int i = 0; i < list.size(); i++) {
+            try {
+                if (list.get(i).getId().equals(id))
+                    return i;
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return -1;
     }
 
     @Override
@@ -87,20 +102,19 @@ public class GlobalRegistry implements ReplicationRegistry {
     public void unbindRemote(String key, String id) throws RemoteException, NotBoundException, AccessException {
         System.out.println("unbindind " + (id == null ? "" : "object " + id + " ") + "with key " + key);
         synchronized (this.bindings) {
-            Balancer b = (Balancer) this.bindings.get(key);
+            Balancer b = this.balancers.get(key);
             if (b == null) {
                 throw new NotBoundException(key);
             } else {
                 if (id == null)
                     b = null;
                 else {
-                    try {
-                        b.removeRessource(id);
-                    } catch (NotBoundException e) {
-                    }
+                    int index = ressourceIndex(this.bindings.get(key),id);
+                    if (index < 1)
+                        throw new NotBoundException(key);
+                    this.bindings.get(key).remove(index);
                 }
             }
-            throw new NotBoundException(key);
         }
     }
 

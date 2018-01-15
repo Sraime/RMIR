@@ -5,7 +5,7 @@ import java.rmi.registry.Registry;
 import java.util.Arrays;
 import java.util.List;
 
-import exercise1.Sorter;
+import exercise1.models.Sorter;
 
 /**
  * Client program.

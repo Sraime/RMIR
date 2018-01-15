@@ -9,50 +9,20 @@ import java.util.List;
 
 public class RoundRobinBalancer implements Balancer {
 
-    private LinkedList<UniqueRemote> remotes;
     private Integer nextIndex;
 
     public RoundRobinBalancer() {
-        this.remotes = new LinkedList<UniqueRemote>();
+        this.nextIndex = 0;
     }
 
     @Override
-    public void addRessource(UniqueRemote r) {
-        this.remotes.add(r);
-        if (this.nextIndex == null)
-            this.nextIndex = 0;
-    }
-
-    @Override
-    public void removeRessource(String id) throws RemoteException, NotBoundException {
-        UniqueRemote obj = null;
-        for (UniqueRemote r : remotes)
-            if (r.getId().equals(id))
-                obj = r;
-        if (obj == null)
-            throw new NotBoundException();
-        this.remotes.remove(obj);
-        if (this.remotes.size() == 0)
-            this.nextIndex = null;
-    }
-
-    @Override
-    public List<UniqueRemote> getRessources() {
-        return remotes;
-    }
-
-    @Override
-    public boolean containRessouce(String id) throws RemoteException {
-        for (UniqueRemote r : remotes)
-            if (r.getId().equals(id))
-                return true;
-        return false;
-    }
-
-    @Override
-    public UniqueRemote getNext() {
-        UniqueRemote r = this.remotes.get(this.nextIndex);
-        this.nextIndex = (nextIndex + 1) % this.remotes.size();
+    public UniqueRemote getNext(List<UniqueRemote> remotes) {
+        if(remotes.size() == 0)
+            return null;
+        if(nextIndex > remotes.size()-1)
+            nextIndex = 0;
+        UniqueRemote r = remotes.get(this.nextIndex);
+        this.nextIndex = (nextIndex + 1) % remotes.size();
         return r;
     }
 }
