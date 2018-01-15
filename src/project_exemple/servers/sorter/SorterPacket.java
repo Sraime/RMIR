@@ -1,13 +1,13 @@
 package project_exemple.servers.sorter;
 
-import project.registry.remote.TypedRemoteInterface;
+import project.registry.remote.TypedRemote;
 import project.service.RemoteRessource;
 
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-public class SorterPacket implements Sorter, Serializable, TypedRemoteInterface {
+public class SorterPacket implements Sorter, Serializable, TypedRemote {
 
     @Override
     public List<String> sort(List<String> list) {
