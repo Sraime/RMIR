@@ -30,7 +30,7 @@ public class MainCarClient {
     System.out.println("client: retrieved registry");
 
     // retrieve the stub of the remote object by its name
-    Car car = (Car) registry.lookup(SERVICE_NAME);
+    Car car = (Car) registry.newLookup(SERVICE_NAME);
     System.out.println("client: retrieved Car stub");
 
     System.out.println("client: car engine is " + car.getEngine());

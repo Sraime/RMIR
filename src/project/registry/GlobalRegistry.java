@@ -119,6 +119,13 @@ public class GlobalRegistry implements ReplicationRegistry {
     }
 
     @Override
+    public Remote newLookup(String key) throws RemoteException {
+        synchronized (this.bindings) {
+            return this.bindings.get(key).get(0).getPayload();
+        }
+    }
+
+    @Override
     public void rebind(String key, Remote obj) throws RemoteException, AccessException {
         try {
             unbindRemote(key, ((UniqueRemote) obj).getId());
