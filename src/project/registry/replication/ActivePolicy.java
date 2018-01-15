@@ -43,6 +43,9 @@ public class ActivePolicy implements ReplicationPolicy {
         System.out.println("[REPLICATION] applying the Active replication in stateful mode");
         LinkedList<Object> results = new LinkedList<Object>();
         for (UniqueRemote remote : this.remotes) {
+            if(remote.getId() == statelessTarget.getId()) {
+                statelessTarget = remote;
+            }
             System.out.println("[REPLICATION] contacting the service with id " + remote.getId());
             results.add(method.invoke(remote.getPayload(), args));
         }
