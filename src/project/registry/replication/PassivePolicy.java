@@ -25,7 +25,7 @@ public class PassivePolicy implements ReplicationPolicy {
     public Object applyStateless(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException, RemoteException {
         System.out.println("[REPLICATION] applying the Passive replication");
         System.out.println("[REPLICATION] contacting the service with id " + lead.getId());
-        return method.invoke(lead.getPayload(), args);
+        return method.invoke(lead, args);
     }
 
     @Override

@@ -5,12 +5,10 @@ import project.registry.balancer.BalancerFactory;
 import project.registry.balancer.BalancerType;
 import project.registry.balancer.LoadBalanced;
 import project.registry.remote.RemoteHandler;
-import project.registry.remote.TypedRemote;
 import project.registry.replication.Replicated;
 import project.registry.replication.ReplicationPolicyFactory;
 
 import java.lang.reflect.Proxy;
-import java.rmi.AccessException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
@@ -50,19 +48,18 @@ public class GlobalRegistry implements ReplicationRegistry {
                 throw new NotBoundException(key);
             } else {
                 UniqueRemote ur = b.getNext();
-                TypedRemote tri = (TypedRemote) ur.getPayload();
-                Replicated rp = tri.getType().getAnnotation(Replicated.class);
+                Replicated rp = ur.getType().getAnnotation(Replicated.class);
                 RemoteHandler handler = new RemoteHandler(ReplicationPolicyFactory.getPolicy(rp.type(), ur, b.getRessources()));
                 System.out.println("lookup remote object " + ur.getId() + " from key " + key);
-                return (Remote) Proxy.newProxyInstance(tri.getType().getClassLoader(),
-                        new Class[]{tri.getType()},
+                return (Remote) Proxy.newProxyInstance(ur.getType().getClassLoader(),
+                        new Class[]{ur.getType()},
                         handler);
             }
         }
     }
 
     @Override
-    public void bind(String key, Remote obj) throws RemoteException, AlreadyBoundException, AccessException {
+    public void bind(String key, Remote obj) throws RemoteException, AlreadyBoundException {
         UniqueRemote ur = (UniqueRemote) obj;
         System.out.println("binding object " + ur.getId() + " with key " + key);
         synchronized (this.bindings) {
@@ -79,12 +76,12 @@ public class GlobalRegistry implements ReplicationRegistry {
     }
 
     @Override
-    public void unbind(String key) throws RemoteException, NotBoundException, AccessException {
+    public void unbind(String key) throws RemoteException, NotBoundException {
         unbindRemote(key, null);
     }
 
     @Override
-    public void unbindRemote(String key, String id) throws RemoteException, NotBoundException, AccessException {
+    public void unbindRemote(String key, String id) throws RemoteException, NotBoundException {
         System.out.println("unbindind " + (id == null ? "" : "object " + id + " ") + "with key " + key);
         synchronized (this.bindings) {
             Balancer b = (Balancer) this.bindings.get(key);
@@ -105,7 +102,7 @@ public class GlobalRegistry implements ReplicationRegistry {
     }
 
     @Override
-    public void rebind(String key, Remote obj) throws RemoteException, AccessException {
+    public void rebind(String key, Remote obj) throws RemoteException {
         try {
             unbindRemote(key, ((UniqueRemote) obj).getId());
         } catch (Exception e) {
@@ -117,7 +114,7 @@ public class GlobalRegistry implements ReplicationRegistry {
     }
 
     @Override
-    public String[] list() throws RemoteException {
+    public String[] list() {
         synchronized (this.bindings) {
             int size = this.bindings.size();
             String[] str = new String[size];
@@ -140,8 +137,7 @@ public class GlobalRegistry implements ReplicationRegistry {
     }
 
     private BalancerType getBalancerType(UniqueRemote ur) throws RemoteException {
-        TypedRemote tri = (TypedRemote) ur.getPayload();
-        LoadBalanced lb = tri.getType().getAnnotation(LoadBalanced.class);
+        LoadBalanced lb = ur.getType().getAnnotation(LoadBalanced.class);
         return lb.policy();
     }
 

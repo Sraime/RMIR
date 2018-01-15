@@ -30,7 +30,7 @@ public class HalfActivePolicy implements ReplicationPolicy {
     public Object applyStateless(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException, RemoteException {
         System.out.println("[REPLICATION] applying the HalfActive replication in stateless mode");
         System.out.println("[REPLICATION] contacting the service with id " + statelessTarget.getId());
-        return method.invoke(statelessTarget.getPayload(), args);
+        return method.invoke(statelessTarget, args);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class HalfActivePolicy implements ReplicationPolicy {
             System.out.println("[REPLICATION] contacting the service with id " + remotes.get(i).getId());
             if (i == 0)
                 result = method.invoke(remotes.get(i), args);
-            method.invoke(remotes.get(i).getPayload(), args);
+            method.invoke(remotes.get(i), args);
         }
         return result;
     }

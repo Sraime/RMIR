@@ -1,11 +1,9 @@
 package project.registry;
 
-import java.rmi.Remote;
+import project.registry.remote.TypedRemote;
+
 import java.rmi.RemoteException;
 
-public interface UniqueRemote extends Remote {
-
-    public String getId() throws RemoteException;
-
-    public Remote getPayload() throws RemoteException;
+public interface UniqueRemote extends TypedRemote {
+    String getId() throws RemoteException;
 }

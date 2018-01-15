@@ -1,6 +1,6 @@
 package project.server;
 
-import project.registry.remote.TypedRemote;
+import project.registry.UniqueRemote;
 import project.registry.replication.Replicated;
 
 import java.rmi.NotBoundException;
@@ -8,9 +8,9 @@ import java.rmi.RemoteException;
 
 public class ThreadedServer extends RemoteServer {
 
-    private TypedRemote remote;
+    private UniqueRemote remote;
 
-    public ThreadedServer(TypedRemote rr) throws RemoteException, NotBoundException {
+    public ThreadedServer(UniqueRemote rr) throws RemoteException, NotBoundException {
         super(rr.getType().getAnnotation(Replicated.class).key());
         this.remote = rr;
     }

@@ -13,14 +13,14 @@ import java.rmi.RemoteException;
 @Replicated(key = "Car", type = ReplicationType.HALF_ACTIVE)
 public interface Car extends UniqueRemote {
 
-  public String getEngine() throws RemoteException;
+  String getEngine() throws RemoteException;
 
-  public String getDestination() throws RemoteException;
-
-  @Stateful
-  public void changeEngine(String engine) throws RemoteException;
+  String getDestination() throws RemoteException;
 
   @Stateful
-  public void driveTo(String destination) throws RemoteException;
+  void changeEngine(String engine) throws RemoteException;
+
+  @Stateful
+  void driveTo(String destination) throws RemoteException;
 
 }

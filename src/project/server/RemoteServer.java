@@ -1,8 +1,6 @@
 package project.server;
 
 import project.registry.*;
-import project.registry.remote.RemoteTypedPacket;
-import project.registry.remote.TypedRemote;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -28,8 +26,8 @@ public abstract class RemoteServer extends Thread {
         System.out.println(this.serveurId + " created with key " + this.keyRegistry);
     }
 
-    protected final void saveRemoteObject(TypedRemote tr) throws RemoteException {
-        UniqueRemote stub = (UniqueRemote) UnicastRemoteObject.exportObject(new RemoteTypedPacket(tr), 0);
+    protected final void saveRemoteObject(UniqueRemote tr) throws RemoteException {
+        UniqueRemote stub = (UniqueRemote) UnicastRemoteObject.exportObject(tr, 0);
         System.out.println(this.serveurId + " generated skeleton and stub for '" + this.keyRegistry + "'");
         this.registry.rebind(keyRegistry, stub);
     }

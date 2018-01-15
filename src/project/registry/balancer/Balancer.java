@@ -7,13 +7,13 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 public interface Balancer {
-    public void addRessource(UniqueRemote remote);
+    void addRessource(UniqueRemote remote);
 
-    public void removeRessource(String id) throws RemoteException, NotBoundException;
+    void removeRessource(String id) throws RemoteException, NotBoundException;
 
-    public List<UniqueRemote> getRessources();
+    List<UniqueRemote> getRessources();
 
-    public boolean containRessouce(String id) throws RemoteException;
+    boolean containRessouce(String id) throws RemoteException;
 
-    public UniqueRemote getNext();
+    UniqueRemote getNext();
 }

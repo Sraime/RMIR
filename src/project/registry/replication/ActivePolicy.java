@@ -35,7 +35,7 @@ public class ActivePolicy implements ReplicationPolicy {
     public Object applyStateless(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException, RemoteException {
         System.out.println("[REPLICATION] applying the Active replication in stateless mode");
         System.out.println("[REPLICATION] contacting the service with id " + statelessTarget.getId());
-        return method.invoke(statelessTarget.getPayload(), args);
+        return method.invoke(statelessTarget, args);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class ActivePolicy implements ReplicationPolicy {
                 statelessTarget = remote;
             }
             System.out.println("[REPLICATION] contacting the service with id " + remote.getId());
-            results.add(method.invoke(remote.getPayload(), args));
+            results.add(method.invoke(remote, args));
         }
         Object result = null;
         try {

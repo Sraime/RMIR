@@ -15,9 +15,9 @@ import java.util.List;
 public interface Sorter extends UniqueRemote
 {
 
-  public List<String> sort(List<String> list) throws RemoteException;
+  List<String> sort(List<String> list) throws RemoteException;
 
   @Stateful
-  public List<String> reverseSort(List<String> list) throws RemoteException;
+  List<String> reverseSort(List<String> list) throws RemoteException;
 
 }

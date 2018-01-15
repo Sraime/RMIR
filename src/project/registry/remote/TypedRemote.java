@@ -1,9 +1,10 @@
 package project.registry.remote;
 
-import project.service.RemoteRessource;
+import project.registry.UniqueRemote;
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 public interface TypedRemote extends Remote {
-    public Class<? extends RemoteRessource> getType();
+    Class<? extends UniqueRemote> getType() throws RemoteException;
 }
