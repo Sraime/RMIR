@@ -6,7 +6,7 @@ import java.util.List;
 
 public class ReplicationPolicyFactory {
 
-    public static ReplicationPolicyInterface getPolicy(ReplicationType type, UniqueRemote stateless, List<UniqueRemote> remotes) {
+    public static ReplicationPolicy getPolicy(ReplicationType type, UniqueRemote stateless, List<UniqueRemote> remotes) {
         switch (type) {
             case PASSIVE:
                 return new PassivePolicy(remotes.get(PassivePolicy.LEAD_INDEX));

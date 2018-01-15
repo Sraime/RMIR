@@ -1,14 +1,12 @@
 package project.registry.replication;
 
 import project.registry.UniqueRemote;
-import project.registry.replication.ReplicationPolicyInterface;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import java.util.List;
 
-public class PassivePolicy implements ReplicationPolicyInterface {
+public class PassivePolicy implements ReplicationPolicy {
 
     public static final int LEAD_INDEX = 0;
 
@@ -25,8 +23,8 @@ public class PassivePolicy implements ReplicationPolicyInterface {
 
     @Override
     public Object applyStateless(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException, RemoteException {
-        System.out.println("[POLICY] applying the Passive replication");
-        System.out.println("[POLICY] contacting the service with id " + lead.getId());
+        System.out.println("[REPLICATION] applying the Passive replication");
+        System.out.println("[REPLICATION] contacting the service with id " + lead.getId());
         return method.invoke(lead.getPayload(), args);
     }
 

@@ -1,13 +1,12 @@
 package project.registry;
 
-import project.registry.UniqueRemote;
 import project.registry.balancer.Balancer;
 import project.registry.balancer.BalancerFactory;
 import project.registry.balancer.BalancerType;
 import project.registry.balancer.LoadBalanced;
 import project.registry.remote.RemoteHandler;
-import project.registry.remote.TypedRemoteInterface;
-import project.registry.replication.ReplicationPolicy;
+import project.registry.remote.TypedRemote;
+import project.registry.replication.Replicated;
 import project.registry.replication.ReplicationPolicyFactory;
 
 import java.lang.reflect.Proxy;
@@ -51,8 +50,8 @@ public class GlobalRegistry implements ReplicationRegistry {
                 throw new NotBoundException(key);
             } else {
                 UniqueRemote ur = b.getNext();
-                TypedRemoteInterface tri = (TypedRemoteInterface) ur.getPayload();
-                ReplicationPolicy rp = tri.getType().getAnnotation(ReplicationPolicy.class);
+                TypedRemote tri = (TypedRemote) ur.getPayload();
+                Replicated rp = tri.getType().getAnnotation(Replicated.class);
                 RemoteHandler handler = new RemoteHandler(ReplicationPolicyFactory.getPolicy(rp.type(), ur, b.getRessources()));
                 System.out.println("lookup remote object " + ur.getId() + " from key " + key);
                 return (Remote) Proxy.newProxyInstance(tri.getType().getClassLoader(),
@@ -141,7 +140,7 @@ public class GlobalRegistry implements ReplicationRegistry {
     }
 
     private BalancerType getBalancerType(UniqueRemote ur) throws RemoteException {
-        TypedRemoteInterface tri = (TypedRemoteInterface) ur.getPayload();
+        TypedRemote tri = (TypedRemote) ur.getPayload();
         LoadBalanced lb = tri.getType().getAnnotation(LoadBalanced.class);
         return lb.policy();
     }

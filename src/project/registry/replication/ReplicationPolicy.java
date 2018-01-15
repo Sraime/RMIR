@@ -1,11 +1,16 @@
 package project.registry.replication;
 
-import project.registry.replication.ReplicationType;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+public interface ReplicationPolicy extends Remote, Serializable{
 
-@Retention(RetentionPolicy.RUNTIME)
-public @interface ReplicationPolicy {
-    ReplicationType type() default ReplicationType.ACTIVE;
+    Object applyPolicy(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException, RemoteException;
+
+    Object applyStateless(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException, RemoteException;
+
+    Object applyStateful(Method method, Object[] args) throws Exception;
 }
