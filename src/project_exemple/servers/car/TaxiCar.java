@@ -1,11 +1,12 @@
 package project_exemple.servers.car;
 
+import project.Service.UUIDUniqueRemote;
+import project.registry.UniqueRemote;
 import project.registry.remote.TypedRemote;
-import project.service.RemoteRessource;
 
 import java.io.Serializable;
 
-public class CarPacket implements Car, Serializable, TypedRemote {
+public class TaxiCar extends UUIDUniqueRemote implements Car, Serializable {
 
     private String engine = "V6";
     private String destination = "Villejuif";
@@ -36,7 +37,8 @@ public class CarPacket implements Car, Serializable, TypedRemote {
     }
 
     @Override
-    public Class<? extends RemoteRessource> getType() {
+    public Class<? extends UniqueRemote> getType() {
         return Car.class;
     }
+
 }
