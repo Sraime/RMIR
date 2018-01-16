@@ -1,6 +1,6 @@
 package project_exemple.servers.sorter;
 
-import project.Service.UUIDUniqueRemote;
+import project.service.UUIDUniqueRemote;
 import project.registry.UniqueRemote;
 
 import java.io.Serializable;
