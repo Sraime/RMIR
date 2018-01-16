@@ -22,5 +22,4 @@ public interface Car extends UniqueRemote {
 
   @Stateful
   void driveTo(String destination) throws RemoteException;
-
 }
