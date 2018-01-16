@@ -1,4 +1,4 @@
-Gitlab : https://gitlab.com/Sobraz/RMI
+Github : https://github.com/Sraime/RMIR
 
 ## INTRODUCTION
 
