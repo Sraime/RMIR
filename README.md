@@ -77,7 +77,7 @@ It indicates that the registry has to apply a load-balancing policy on this reso
          * ROUND_ROBIN_BALANCER : ressources are distributed cyclically
          * FIRST_INSTANCE_BALANCER (default) : the first available resource is returned
          
-#### @Stateful
+##### @Stateful
 
 The goal of this annotation is to define methods which modify the state of the object.
 It's COMPULSORY to ensure the replication.
@@ -124,7 +124,7 @@ public class TaxiCar extends UUIDUniqueRemote implements Car, Serializable {
 }
 ```
 
-#### getType()
+##### getType()
 
 This function has to be sent to the interface on the associated server.
 In the previous example it's the Car interface.
