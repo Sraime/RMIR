@@ -1,6 +1,6 @@
 Gitlab : https://gitlab.com/Sobraz/RMI
 
-##INTRODUCTION
+## INTRODUCTION
 
 This framework handles the replication of objects on different servers.
 
@@ -20,9 +20,9 @@ The architecture is fully maintainable and make the addition of new load balanci
 
 You just have to create new factories.
 
-##HOW TO USE THE FRAMEWORK
+## HOW TO USE THE FRAMEWORK
 
-###Registry
+### Registry
 
 To run the program a registry is needed to allow the servers to register on it.
 The clients can contact this registry to access the objects remotely the same way you access local object.
@@ -61,14 +61,14 @@ public interface Car extends UniqueRemote {
 }
 ```
 
-#####@Replicated
+##### @Replicated
 
 This annotation is COMPULSORY for every remotes.
 It indicates that the object is replicated and its register key.
 - key (compulsory) : definition of the register key le Registry
 - type (compulsory) : definition of the replication policy
 
-#####@LoadBalanced
+##### @LoadBalanced
 
 This annotation is FACULTATIVE.
 It indicates that the registry has to apply a load-balancing policy on this resource.
@@ -77,7 +77,7 @@ It indicates that the registry has to apply a load-balancing policy on this reso
          * ROUND_ROBIN_BALANCER : ressources are distributed cyclically
          * FIRST_INSTANCE_BALANCER (default) : the first available resource is returned
          
-####@Stateful
+#### @Stateful
 
 The goal of this annotation is to define methods which modify the state of the object.
 It's COMPULSORY to ensure the replication.
@@ -124,12 +124,12 @@ public class TaxiCar extends UUIDUniqueRemote implements Car, Serializable {
 }
 ```
 
-####getType()
+#### getType()
 
 This function has to be sent to the interface on the associated server.
 In the previous example it's the Car interface.
 
-###Servers
+### Servers
 
 Once the servicies are defined, instancies have to be launched on the servers to save it on the registry.
 The class ThreadedRemote allows to launch instances of servers : 
@@ -144,7 +144,7 @@ public static void main(String[] args){
     }
 ```
 
-###Client
+### Client
 
 The acces to remote resources is really easy.
 You only have to retrieve it from the registry via the GlobalRegistry, the retrieve the resource using its key (defined in the interface).
@@ -170,6 +170,6 @@ public class MainCarClient {
 }
 ```
 
-###Contact
+### Contact
 
 If you have question on this project, please contact us on robin.collas.efrei@gmail.com.
