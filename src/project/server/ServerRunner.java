@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 
 public class ServerRunner {
 
-    public static void runRemoteServer(UniqueRemote tr) throws RemoteException, NotBoundException {
+    public static void runRemoteServer(UniqueRemote tr) throws RemoteException, NotBoundException, IncorrectDeclarationException {
         RemoteServer rs = new ThreadedServer(tr);
         rs.start();
     }

@@ -1,6 +1,7 @@
 package project.server;
 
 import project.registry.*;
+import project.registry.replication.Replicated;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -15,11 +16,12 @@ public abstract class RemoteServer extends Thread {
     private final String serveurId;
     private final String keyRegistry;
 
-    protected RemoteServer() throws RemoteException, NotBoundException {
-        this(null);
-    }
-
-    protected RemoteServer(String keyRegistry) throws RemoteException, NotBoundException {
+    protected RemoteServer(UniqueRemote ur) throws RemoteException, NotBoundException, IncorrectDeclarationException {
+        if(ur.getType() == null)
+            throw new IncorrectDeclarationException("The getType() method of UniqueRemote cannot return null");
+        if(! ur.getType().isAnnotationPresent(Replicated.class))
+            throw new IncorrectDeclarationException("Replicated annotation is required on the UniqueRemote interface");
+        String keyRegistry = ur.getType().getAnnotation(Replicated.class).key();
         this.serveurId = "server-" + UUID.randomUUID();
         this.keyRegistry = (keyRegistry == null || keyRegistry.equals("")) ? this.serveurId : keyRegistry;
         this.registry = GlobalRegistry.getRegistry(HOST_GLOBAL_REGISTRY);

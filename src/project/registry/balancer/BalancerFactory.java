@@ -7,7 +7,7 @@ public class BalancerFactory {
             case ROUND_ROBIN_BALANCER:
                 return new RoundRobinBalancer();
             case FIRST_INSTANCE_BALANCER:
-                return new RoundRobinBalancer();
+                return new FirstInstanceBalancer();
             default:
                 return null;
         }

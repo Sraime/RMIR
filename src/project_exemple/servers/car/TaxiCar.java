@@ -2,6 +2,7 @@ package project_exemple.servers.car;
 
 import project.Service.UUIDUniqueRemote;
 import project.registry.UniqueRemote;
+import project.registry.remote.TypedRemote;
 
 import java.io.Serializable;
 

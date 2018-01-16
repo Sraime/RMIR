@@ -7,6 +7,8 @@ import project.registry.balancer.LoadBalanced;
 import project.registry.remote.RemoteHandler;
 import project.registry.replication.Replicated;
 import project.registry.replication.ReplicationPolicyFactory;
+import project.registry.replication.ReplicationType;
+import project.server.IncorrectDeclarationException;
 
 import java.lang.reflect.Proxy;
 import java.rmi.AlreadyBoundException;
@@ -65,7 +67,23 @@ public class GlobalRegistry implements ReplicationRegistry {
         synchronized (this.bindings) {
             Balancer b = this.bindings.get(key);
             if (b == null) {
-                b = BalancerFactory.getBalancer(getBalancerType(ur));
+                BalancerType bt = getBalancerType(ur);
+                if(bt == null){
+                    System.out.println("[WARNING] applying default balancer " + BalancerType.FIRST_INSTANCE_BALANCER + " on key " + key);
+                    b = BalancerFactory.getBalancer(BalancerType.FIRST_INSTANCE_BALANCER);
+                } else {
+                    if(ur.getType().getAnnotation(Replicated.class).type() == ReplicationType.PASSIVE){
+                        try {
+                            throw new IncorrectDeclarationException("No balancer can be applyed with PASSIVE replication");
+                        } catch (IncorrectDeclarationException e) {
+                            e.printStackTrace();
+                            b = BalancerFactory.getBalancer(BalancerType.FIRST_INSTANCE_BALANCER);
+                        }
+                    } else {
+                        System.out.println("applying balancer " + bt + " on key " + key);
+                        b = BalancerFactory.getBalancer(bt);
+                    }
+                }
             } else {
                 if (b.containRessouce(ur.getId()))
                     throw new AlreadyBoundException(key);
@@ -138,7 +156,7 @@ public class GlobalRegistry implements ReplicationRegistry {
 
     private BalancerType getBalancerType(UniqueRemote ur) throws RemoteException {
         LoadBalanced lb = ur.getType().getAnnotation(LoadBalanced.class);
-        return lb.policy();
+        return lb == null ? null : lb.policy();
     }
 
 

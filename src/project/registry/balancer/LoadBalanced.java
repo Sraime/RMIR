@@ -8,5 +8,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface LoadBalanced {
-    BalancerType policy() default BalancerType.FIRST_INSTANCE_BALANCER;
+    BalancerType policy();
 }

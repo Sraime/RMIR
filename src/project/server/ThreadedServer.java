@@ -10,8 +10,8 @@ public class ThreadedServer extends RemoteServer {
 
     private UniqueRemote remote;
 
-    public ThreadedServer(UniqueRemote rr) throws RemoteException, NotBoundException {
-        super(rr.getType().getAnnotation(Replicated.class).key());
+    public ThreadedServer(UniqueRemote rr) throws RemoteException, NotBoundException, IncorrectDeclarationException {
+        super(rr);
         this.remote = rr;
     }
 
